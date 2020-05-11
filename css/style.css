@@ -15,6 +15,10 @@ body {
     background-repeat: no-repeat;
 }
 
+header img {
+    width: 100%;
+}
+
 footer {
     text-align: center;
     font-size: small;
@@ -34,4 +38,27 @@ footer {
     text-align: center;
     padding: 10px;
     width: 100%;
+    resize: none;
+}
+
+a {
+    color: lightgray;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* The texts */
+
+.marker {
+    background-color: lightgreen;
+    color: black;
+}
+
+.error {
+    background-color: darkred;
+    color: lightgrey;
 }

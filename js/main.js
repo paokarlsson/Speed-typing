@@ -29,8 +29,8 @@ function loadXMLToArray(url) {
 function setCurrentText() {
     let textsElement = document.getElementById("texts");
     currentText = textsElement.value;
-    let readArea = document.getElementById("read");
-    readArea.innerHTML = texts[currentText].text;
+    makeSpan(texts[currentText].text);
+    document.getElementById("span3").setAttribute("class", "marker");
 
 }
 
@@ -57,6 +57,7 @@ function languageChangeEvent() {
         }
     }
     populateChooseTexts();
+    setCurrentText();
 }
 
 function languageChange() {
@@ -72,6 +73,17 @@ function ignoreCasingChange() {
         ignoreCasing = true;
     } else {
         ignoreCasing = false;
+    }
+}
+
+function makeSpan(text) {
+    let readArea = document.getElementById("read");
+    readArea.innerHTML = "";
+    for (let i = 0; i < text.length; i++) {
+        let newSpan = document.createElement("span");
+        newSpan.setAttribute("id", "span" + i);
+        newSpan.innerText = text[i];
+        readArea.appendChild(newSpan);
     }
 }
 
