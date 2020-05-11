@@ -1,0 +1,20 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    color: lightgrey;
+    max-width: 600px;
+    margin: auto;
+    background-color: #242424;
+    background-image: url("../img/bg.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.grey-bg {
+    background-color: rgba(0, 0, 0, 0.8);
+}
