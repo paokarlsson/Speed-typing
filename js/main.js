@@ -1,25 +1,12 @@
-window.addEventListener("load", start, false);
-
-function start() {
-    loadXML("Texts.xml");
-    let titles = xmlDoc.getElementsByTagName("object")[0].children;
-
-    console.log(titles.length);
-    for (let i = 0; i < titles.length; i += 4) {
-        if (titles[i].tagName == );
-
-    }
-    // console.log(titles.length);
-    // for (let i = 0; i < titles.length; i++) {
-    //     let title = titles[i].childNodes[0].nodeValue;
-
-    // }
-}
-
 let xmlDoc;
-let texts;
 
-class Texts {
+// object containing all texts. 
+let texts = new Array();
+let currentText = 0;
+let lang = "swedish";
+let ignoreCasing = false;
+
+class Text {
     constructor(title, author, language, text) {
         this.title = title;
         this.author = author;
@@ -28,9 +15,74 @@ class Texts {
     }
 }
 
-function loadXML(url) {
+function loadXMLToArray(url) {
     let xml = new XMLHttpRequest();
     xml.open("get", url, false);
     xml.send(null);
     xmlDoc = xml.responseXML;
+    let elements = xmlDoc.getElementsByTagName("object")[0].children;
+    for (let i = 0, j = 0; i < elements.length; i += 4, j++) {
+        texts[j] = new Text(elements[i].innerHTML, elements[i + 1].innerHTML, elements[i + 2].innerHTML, elements[i + 3].innerHTML);
+    }
 }
+
+function setCurrentText() {
+    let textsElement = document.getElementById("texts");
+    currentText = textsElement.value;
+    let readArea = document.getElementById("read");
+    readArea.innerHTML = texts[currentText].text;
+
+}
+
+
+function populateChooseTexts() {
+    let textsElement = document.getElementById("texts");
+    textsElement.innerHTML = "";
+    for (let i = 0; i < texts.length; i++) {
+        if (texts[i].language == lang) {
+            let option = document.createElement("option");
+            option.text = texts[i].title;
+            option.value = i;
+            textsElement.appendChild(option);
+        }
+    }
+    textsElement.addEventListener("change", setCurrentText, false);
+}
+
+function languageChangeEvent() {
+    let language = document.getElementsByName("language");
+    for (let i = 0; i < language.length; i++) {
+        if (language[i].checked) {
+            lang = language[i].value;
+        }
+    }
+    populateChooseTexts();
+}
+
+function languageChange() {
+    let language = document.getElementsByName("language");
+    for (let i = 0; i < language.length; i++) {
+        language[i].addEventListener("change", languageChangeEvent, false);
+    }
+
+}
+
+function ignoreCasingChange() {
+    if (document.getElementById("ignoreCasing").checked) {
+        ignoreCasing = true;
+    } else {
+        ignoreCasing = false;
+    }
+}
+
+function start() {
+    loadXMLToArray("Texts.xml");
+    languageChange();
+    populateChooseTexts();
+    setCurrentText();
+    document.getElementById("ignoreCasing").addEventListener("change", ignoreCasingChange, false);
+
+
+}
+
+window.addEventListener("load", start, false);
