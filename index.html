@@ -18,31 +18,50 @@ olka0600@student.miun.se
 </head>
 
 <body>
-    <header class="grey-bg padding">
+    <header class="grey-bg">
         <img src="./img/typing-desktop.jpg" alt="">
-        <h1>TouchTyping</h1>
+        <h1>Speed typing</h1>
     </header>
     <main class="grey-bg">
-        <section id="properties" class="padding">
-            <p><input id="ignoreCasing" type="checkbox">Ignore casing</p>
-            <p><input name="language" id="language-swe" type="radio" value="swedish" checked>Svenska
-                <input name="language" id="language-eng" type="radio" value="english">English</p>
+        <section class="two-col">
+            <section id="properties" class="padding">
+                <p><input id="ignoreCasing" type="checkbox">Ignore casing</p>
+                <p><input name="language" id="language-swe" type="radio" value="swedish" checked>swedish
+                    <input name="language" id="language-eng" type="radio" value="english">English</p>
+            </section>
+            <section id="text-choice" class="text-choice padding">
+                <label for="texts">Choose text:</label>
+                <select name="texts" id="texts">
+                    </select>
+            </section>
         </section>
-        <section id="text-choice" class="padding">
-            <label for="texts">Välj text:</label>
-            <select name="texts" id="texts">
-              </select>
+        <section id="read" class="grey-bg read clear-float padding">
+            <h2 class="text-title" id="read-title"></h2>
+            <p class="text-details" id="read-authorAndDetails"></p>
+            <p class="text-content" id="read-content"></p>
         </section>
-        <section id="read" class="padding"></section>
-        <section id="type" class="padding">
-            <textarea autofocus class="textarea" rows="1"></textarea>
+        <section id="type" class="padding typing-area">
+            <textarea id="typeArea" class="textarea" placeholder="Type here..." rows="1"></textarea>
         </section>
-        <section id="gameControl"></section>
-        <section id="stats"></section>
+        <section id="gameControl">
+            <input type="button" autofocus value="Start" id="start-stop">
+        </section>
+        <section id="stats" class="stats">
+            <table class="stats-table">
+                <tr>
+                    <td>Gross WPM: <span id="grossWPM">0</span></td>
+                    <td>Accuracy: <span id="accuracy">0</span></td>
+                </tr>
+                <tr>
+                    <td>Net WPM: <span id="netWPM">0</span></td>
+                    <td>Errors: <span id="errors">0</span></td>
+                </tr>
+            </table>
+        </section>
     </main>
     <footer class="grey-bg padding">
         <p>Copyright &copy 2020 Ola Karlsson</p>
-        <p><a href="mailto:olka0600@student.miun.se">Kontakta mig</a></p>
+        <p><a href="mailto:olka0600@student.miun.se">Contact me!</a></p>
     </footer>
 </body>
 

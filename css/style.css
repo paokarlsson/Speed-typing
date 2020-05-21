@@ -1,3 +1,7 @@
+html {
+    font-size: 16px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -9,14 +13,73 @@ body {
     color: lightgrey;
     max-width: 600px;
     margin: auto;
-    background-color: #242424;
     background-image: url("../img/bg.jpg");
+    background-color: #242424;
     background-size: cover;
     background-repeat: no-repeat;
 }
 
+header {
+    display: grid;
+    justify-items: center;
+}
+
 header img {
     width: 100%;
+}
+
+h1 {
+    margin-top: 1rem;
+}
+
+p {
+    margin-bottom: 0.3rem;
+}
+
+.read {
+    border: 2px solid lightgrey;
+}
+
+.text-title {
+    text-align: center;
+    font-size: large;
+    font-style: italic;
+    margin-bottom: 0.8rem;
+}
+
+.text-details {
+    text-align: center;
+    font-size: small;
+    margin-bottom: 1rem;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.text-choice {
+    display: grid;
+    justify-items: center;
+}
+
+.typing-area {
+    display: grid;
+    justify-items: center;
+}
+
+.clear-float {
+    clear: both;
+}
+
+.stats {
+    display: grid;
+    justify-items: center;
+}
+
+.stats-table {
+    width: 40%;
+    text-align: right;
 }
 
 footer {
@@ -37,7 +100,7 @@ footer {
     color: lightgrey;
     text-align: center;
     padding: 10px;
-    width: 100%;
+    width: 60%;
     resize: none;
 }
 
@@ -54,11 +117,25 @@ a:hover {
 /* The texts */
 
 .marker {
-    background-color: lightgreen;
+    background-color: lightblue;
     color: black;
 }
 
+.marker-reset {
+    background-color: none;
+}
+
 .error {
-    background-color: darkred;
+    background-color: red;
     color: lightgrey;
+}
+
+.correct {
+    background-color: green;
+    color: black;
+}
+
+#gameControl {
+    display: grid;
+    justify-items: center;
 }
