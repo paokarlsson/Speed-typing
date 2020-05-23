@@ -1,3 +1,8 @@
+@font-face {
+    font-family: MyFont;
+    src: url("/font/Karla/Karla-Regular.ttf"), url("/font/Crimson_Text/CrimsonText-Regular.ttf");
+}
+
 html {
     font-size: 16px;
 }
@@ -6,7 +11,7 @@ html {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: MyFont, sans-serif;
 }
 
 body {
@@ -15,7 +20,7 @@ body {
     margin: auto;
     background-image: url("../img/bg.jpg");
     background-color: #242424;
-    background-size: cover;
+    background-size: 100%;
     background-repeat: no-repeat;
 }
 
@@ -26,6 +31,38 @@ header {
 
 header img {
     width: 100%;
+}
+
+#dot1 {
+    animation-duration: 2s;
+    animation-name: fadingInAndOut;
+    animation-iteration-count: infinite;
+}
+
+#dot2 {
+    animation-duration: 2s;
+    animation-delay: 200ms;
+    animation-name: fadingInAndOut;
+    animation-iteration-count: infinite;
+}
+
+#dot3 {
+    animation-duration: 2s;
+    animation-delay: 400ms;
+    animation-name: fadingInAndOut;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fadingInAndOut {
+    0% {
+        color: rgba(255, 255, 255, 0.0);
+    }
+    50% {
+        color: rgba(255, 255, 255, 1.0);
+    }
+    100% {
+        color: rgba(255, 255, 255, 0.0);
+    }
 }
 
 h1 {
@@ -74,11 +111,17 @@ p {
 
 .stats {
     display: grid;
-    justify-items: center;
+    grid-template-columns: 200px 1fr;
+    justify-items: left;
+}
+
+.canvas {
+    border: 1px solid white;
 }
 
 .stats-table {
-    width: 40%;
+    margin-top: 15px;
+    width: 80%;
     text-align: right;
 }
 
@@ -117,7 +160,7 @@ a:hover {
 /* The texts */
 
 .marker {
-    background-color: lightblue;
+    background-color: skyblue;
     color: black;
 }
 
@@ -126,16 +169,31 @@ a:hover {
 }
 
 .error {
-    background-color: red;
-    color: lightgrey;
+    color: red;
 }
 
 .correct {
-    background-color: green;
-    color: black;
+    color: #777;
 }
 
 #gameControl {
     display: grid;
     justify-items: center;
+}
+
+.btn {
+    background: transparent;
+    border: none;
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.btn-start {
+    background-image: url("/img/start.png");
+}
+
+.btn-stop {
+    background-image: url("/img/stop.png");
 }

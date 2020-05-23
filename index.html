@@ -11,7 +11,7 @@ olka0600@student.miun.se
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Touch typing</title>
+    <title>Speed typing . . .</title>
     <script src="./js/main.js"></script>
     <link rel="stylesheet" href="./css/style.css">
 
@@ -19,8 +19,8 @@ olka0600@student.miun.se
 
 <body>
     <header class="grey-bg">
-        <img src="./img/typing-desktop.jpg" alt="">
-        <h1>Speed typing</h1>
+        <img src="./img/typing-desktop.jpg" alt="keyboard">
+        <h1>Speed typing <span id="dot1">. </span><span id="dot2">. </span><span id="dot3">. </span></h1>
     </header>
     <main class="grey-bg">
         <section class="two-col">
@@ -41,12 +41,15 @@ olka0600@student.miun.se
             <p class="text-content" id="read-content"></p>
         </section>
         <section id="type" class="padding typing-area">
-            <textarea id="typeArea" class="textarea" placeholder="Type here..." rows="1"></textarea>
+            <textarea id="typeArea" disabled class="textarea" placeholder="Type here..." rows="1"></textarea>
         </section>
         <section id="gameControl">
-            <input type="button" autofocus value="Start" id="start-stop">
+            <input type="button" autofocus id="start-stop" class="btn btn-start">
         </section>
         <section id="stats" class="stats">
+            <canvas id="canvas" class="canvas" width="200" height="100">
+
+            </canvas>
             <table class="stats-table">
                 <tr>
                     <td>Gross WPM: <span id="grossWPM">0</span></td>
