@@ -1,16 +1,11 @@
 let xmlDoc;
-
-// object containing all texts. 
 let texts = new Array();
 let currentText;
 let lang = "swedish";
 let ignoreCasing = false;
-
 let statistics;
-
-
 let interval;
-
+let game;
 
 class Text {
     constructor(title, author, language, text) {
@@ -121,24 +116,9 @@ class Stats {
     }
 }
 
-function loadXMLToArray(url) {
-    let xml = new XMLHttpRequest();
-    xml.open("get", url, false);
-    xml.send(null);
-    xmlDoc = xml.responseXML;
-    let elements = xmlDoc.getElementsByTagName("object")[0].children;
-    for (let i = 0, j = 0; i < elements.length; i += 4, j++) {
-        texts[j] = new Text(elements[i].innerHTML, elements[i + 1].innerHTML, elements[i + 2].innerHTML, elements[i + 3].innerHTML);
-    }
-}
 
-function addEventListeners() {
-    document.getElementById("language-swe").addEventListener("change", languageChange, false);
-    document.getElementById("language-eng").addEventListener("change", languageChange, false);
-    document.getElementById("ignore-casing").addEventListener("change", ignoreCasingChange, false);
-    document.getElementById("start-stop").addEventListener("click", startStopButtonClicked, false);
-    populateChooseTexts();
-}
+
+
 
 function populateChooseTexts() {
     let textsElement = document.getElementById("text-choice__texts");
@@ -191,7 +171,7 @@ function gameStart() {
     document.getElementById("type__input").addEventListener("input", typing, false);
     document.getElementById("type__input").addEventListener("keydown", spaceHit, false);
     markNextChar();
-    statistics.startTime = Date.now();
+    game.statistics.startTime = Date.now();
     interval = setInterval(update, 200);
 }
 
@@ -201,7 +181,7 @@ function gameStop() {
     disableEnable(false);
     clearInterval(interval);
     update();
-    statistics.stopTime = Date.now();
+    game.statistics.stopTime = Date.now();
 }
 
 function startStopButtonClicked() {
@@ -245,14 +225,13 @@ function typing(e) {
         correct = false;
     }
     let stat = new Stat(marker, Date.now(), correct);
-    statistics.stats.push(stat);
+    game.statistics.stats.push(stat);
     marker++;
     if (marker === currentText.text.length) {
         gameStop();
         return;
     }
     markNextChar();
-    console.log(statistics.getRealtimeWPMUpTo(statistics.stats.length - 1));
 }
 
 function spaceHit(e) {
@@ -267,10 +246,10 @@ function errorSound() {
 }
 
 function update() {
-    document.getElementById("gross-wpm").innerHTML = statistics.getGrossWPM();
-    document.getElementById("accuracy").innerHTML = statistics.getAccuracy();
-    document.getElementById("net-wpm").innerHTML = statistics.getNetWPM();
-    document.getElementById("errors").innerHTML = statistics.getNrOfErrors();
+    document.getElementById("gross-wpm").innerHTML = game.statistics.getGrossWPM();
+    document.getElementById("accuracy").innerHTML = game.statistics.getAccuracy();
+    document.getElementById("net-wpm").innerHTML = game.statistics.getNetWPM();
+    document.getElementById("errors").innerHTML = game.statistics.getNrOfErrors();
     canvas();
 }
 
@@ -290,7 +269,7 @@ function reset() {
     marker = 0;
     nrOfError = 0;
     clearMarker();
-    statistics.stats = [];
+    game.statistics.stats = [];
     update();
     document.getElementById("type__input").value = "";
 }
@@ -322,9 +301,9 @@ function canvas() {
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < statistics.stats.length; i++) {
-        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
-        let y = 100 - statistics.getNrOfErrorsUpTo(i);
+    for (let i = 0; i < game.statistics.stats.length; i++) {
+        let x = i * ((game.statistics.stats.length / currentText.text.length) * canvas.width) / game.statistics.stats.length;
+        let y = 100 - game.statistics.getNrOfErrorsUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -334,9 +313,9 @@ function canvas() {
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < statistics.stats.length; i++) {
-        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
-        let y = 100 - statistics.getGrossWPMUpTo(i);
+    for (let i = 0; i < game.statistics.stats.length; i++) {
+        let x = i * ((game.statistics.stats.length / currentText.text.length) * canvas.width) / game.statistics.stats.length;
+        let y = 100 - game.statistics.getGrossWPMUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -344,15 +323,44 @@ function canvas() {
     ctx.translate(-0.5, -0.5);
 }
 
+class Game {
+    statistics = new Stats();
+}
+
+function addEventListeners() {
+    document.getElementById("language-swe").addEventListener("change", languageChange, false);
+    document.getElementById("language-eng").addEventListener("change", languageChange, false);
+    document.getElementById("ignore-casing").addEventListener("change", ignoreCasingChange, false);
+    document.getElementById("start-stop").addEventListener("click", startStopButtonClicked, false);
+    populateChooseTexts();
+}
+
+function loadXMLToArray(url) {
+    let xml = new XMLHttpRequest();
+    xml.open("get", url, false);
+    xml.send(null);
+    xmlDoc = xml.responseXML;
+    let elements = xmlDoc.getElementsByTagName("object");
+    console.log(elements[0].getElementsByTagName("title")[0].innerHTML);
+    for (let i = 0; i < elements.length; i++) {
+        texts[i] = new Text(
+            elements[i].getElementsByTagName("title")[0].innerHTML,
+            elements[i].getElementsByTagName("author")[0].innerHTML,
+            elements[i].getElementsByTagName("language")[0].innerHTML,
+            elements[i].getElementsByTagName("text")[0].innerHTML
+        );
+    }
+}
+
 function start() {
     loadXMLToArray("Texts.xml");
     addEventListeners();
-    statistics = new Stats();
+    game = new Game();
+    //game.statistics = new Stats();
+
     setCurrentText();
     currentText.displayReadArea();
     canvas();
-
-
 
 }
 
