@@ -27,26 +27,31 @@ body {
 header {
     display: grid;
     justify-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
-header img {
+.header__img {
     width: 100%;
 }
 
-#dot1 {
+.header__h1 {
+    padding: 0px 20px 15px;
+}
+
+.header__dot1 {
     animation-duration: 2s;
     animation-name: fadingInAndOut;
     animation-iteration-count: infinite;
 }
 
-#dot2 {
+.header__dot2 {
     animation-duration: 2s;
     animation-delay: 200ms;
     animation-name: fadingInAndOut;
     animation-iteration-count: infinite;
 }
 
-#dot3 {
+.header__dot3 {
     animation-duration: 2s;
     animation-delay: 400ms;
     animation-name: fadingInAndOut;
@@ -65,34 +70,15 @@ header img {
     }
 }
 
-h1 {
-    margin-top: 1rem;
+.main {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
 }
 
-p {
-    margin-bottom: 0.3rem;
-}
-
-.read {
-    border: 2px solid lightgrey;
-}
-
-.text-title {
-    text-align: center;
-    font-size: large;
-    font-style: italic;
-    margin-bottom: 0.8rem;
-}
-
-.text-details {
-    text-align: center;
-    font-size: small;
-    margin-bottom: 1rem;
-}
-
-.two-col {
+.chooices {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-bottom: 15px;
 }
 
 .text-choice {
@@ -100,64 +86,28 @@ p {
     justify-items: center;
 }
 
-.typing-area {
-    display: grid;
-    justify-items: center;
+.read {
+    border: 2px solid lightgrey;
+    padding: 15px;
+    margin-bottom: 15px;
 }
 
-.clear-float {
-    clear: both;
+.read__title {
+    text-align: center;
+    font-size: large;
+    font-style: italic;
+    margin-bottom: 0.8rem;
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    justify-items: left;
-}
-
-.canvas {
-    border: 1px solid white;
-}
-
-.stats-table {
-    margin-top: 15px;
-    width: 80%;
-    text-align: right;
-}
-
-footer {
+.read__details {
     text-align: center;
     font-size: small;
+    margin-bottom: 0.5rem;
 }
 
-.grey-bg {
-    background-color: rgba(0, 0, 0, 0.8);
+.read__content {
+    line-height: 1.4;
 }
-
-.padding {
-    padding: 15px;
-}
-
-.textarea {
-    background-color: #333;
-    color: lightgrey;
-    text-align: center;
-    padding: 10px;
-    width: 60%;
-    resize: none;
-}
-
-a {
-    color: lightgray;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-
-/* The texts */
 
 .marker {
     background-color: skyblue;
@@ -176,12 +126,28 @@ a:hover {
     color: #777;
 }
 
-#gameControl {
+.type {
     display: grid;
     justify-items: center;
+    margin-bottom: 15px;
 }
 
-.btn {
+.type__input {
+    background-color: #333;
+    color: lightgrey;
+    text-align: center;
+    padding: 10px;
+    width: 60%;
+    resize: none;
+}
+
+.game-control {
+    display: grid;
+    justify-items: center;
+    margin-bottom: 15px;
+}
+
+.game-control__btn {
     background: transparent;
     border: none;
     background-size: cover;
@@ -190,10 +156,43 @@ a:hover {
     margin-bottom: 10px;
 }
 
-.btn-start {
+.game-control__btn--start {
     background-image: url("/img/start.png");
 }
 
-.btn-stop {
+.game-control__btn--stop {
     background-image: url("/img/stop.png");
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: 33% 67%;
+    justify-items: left;
+}
+
+.stats__canvas {
+    border: 2px solid lightgrey;
+}
+
+.stats__table {
+    margin-top: 15px;
+    width: 80%;
+    text-align: right;
+}
+
+.footer {
+    border-top: 2px solid lightgrey;
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    font-size: small;
+    padding: 15px;
+}
+
+.footer a {
+    color: lightgray;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }

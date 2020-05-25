@@ -2,16 +2,14 @@ let xmlDoc;
 
 // object containing all texts. 
 let texts = new Array();
-let currentText = 0;
+let currentText;
 let lang = "swedish";
 let ignoreCasing = false;
-let marker = 0;
-let nrOfError = 0;
-let statsClass;
+
+let statistics;
 
 
 let interval;
-let grossWPM;
 
 
 class Text {
@@ -36,9 +34,9 @@ class Text {
         this.spannedText = readArea.innerHTML;
     }
     displayReadArea() {
-        let title = document.getElementById("read-title");
-        let author = document.getElementById("read-authorAndDetails");
-        let text = document.getElementById("read-content");
+        let title = document.getElementById("read__title");
+        let author = document.getElementById("read__author-details");
+        let text = document.getElementById("read__content");
         title.innerHTML = this.title;
         author.innerHTML = this.author + " (" + this.numberOfWords + ", " + this.numberOfChars + ")";
         text.innerHTML = this.spannedText;
@@ -98,14 +96,7 @@ class Stats {
             return 0;
         }
     }
-    getNetWPMUpTo(i) {
-        let netWPM = this.getGrossWPMUpTo(i) - (this.getNrOfErrorsUpTo(i) / this.getElapsedTimeInMinutesUpTo(i));
-        if (this.startTime !== undefined) {
-            return netWPM;
-        } else {
-            return 0;
-        }
-    }
+
     getAccuracy() {
         if (this.stats.length !== 0) {
             return (100 - (this.getNrOfErrors() / this.stats.length) * 100).toFixed(0) + "%";
@@ -113,13 +104,7 @@ class Stats {
             return "0%";
         }
     }
-    getAccuracyUpTo(i) {
-        if (this.stats.length !== 0) {
-            return 100 - (this.getNrOfErrorsUpTo(i) / i * 100).toFixed(0);
-        } else {
-            return "0%";
-        }
-    }
+
     getNrOfErrors() {
         let count = 0;
         for (let i = 0; i < this.stats.length; i++) {
@@ -134,25 +119,7 @@ class Stats {
         }
         return count;
     }
-    getRealtimeWPMUpTo(i) {
-        let k;
-        if (i < 5) {
-            k = i;
-        } else {
-            k = 5;
-        }
-        if (i > 0) {
-            let accumulated = this.stats[0].timeStamp - this.startTime;;
-            for (let j = 0; j < k; j++) {
-                accumulated += this.stats[i - j].timeStamp - this.stats[i - j - 1].timeStamp;
-            }
-            return 60000 / (5 * accumulated / k);
-        } else {
-            return 60000 / ((this.stats[0].timeStamp - this.startTime) * 5);
-        }
-    }
 }
-
 
 function loadXMLToArray(url) {
     let xml = new XMLHttpRequest();
@@ -168,13 +135,13 @@ function loadXMLToArray(url) {
 function addEventListeners() {
     document.getElementById("language-swe").addEventListener("change", languageChange, false);
     document.getElementById("language-eng").addEventListener("change", languageChange, false);
-    document.getElementById("ignoreCasing").addEventListener("change", ignoreCasingChange, false);
+    document.getElementById("ignore-casing").addEventListener("change", ignoreCasingChange, false);
     document.getElementById("start-stop").addEventListener("click", startStopButtonClicked, false);
     populateChooseTexts();
 }
 
 function populateChooseTexts() {
-    let textsElement = document.getElementById("texts");
+    let textsElement = document.getElementById("text-choice__texts");
     textsElement.innerHTML = "";
     for (let i = 0; i < texts.length; i++) {
         if (texts[i].language == lang) {
@@ -188,7 +155,7 @@ function populateChooseTexts() {
 }
 
 function setCurrentText() {
-    let textsElement = document.getElementById("texts");
+    let textsElement = document.getElementById("text-choice__texts");
     currentText = texts[textsElement.value];
     currentText.displayReadArea();
     document.getElementById("start-stop").focus();
@@ -208,7 +175,7 @@ function languageChange() {
 }
 
 function ignoreCasingChange() {
-    if (document.getElementById("ignoreCasing").checked) {
+    if (document.getElementById("ignore-casing").checked) {
         ignoreCasing = true;
     } else {
         ignoreCasing = false;
@@ -216,30 +183,30 @@ function ignoreCasingChange() {
 }
 
 function gameStart() {
-    document.getElementById("start-stop").setAttribute("class", "btn btn-stop");
-    document.getElementById("typeArea").value = "";
+    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--stop");
+    document.getElementById("type__input").value = "";
     disableEnable(true);
-    document.getElementById("typeArea").focus();
+    document.getElementById("type__input").focus();
     reset();
-    document.getElementById("typeArea").addEventListener("input", typing, false);
-    document.getElementById("typeArea").addEventListener("keydown", spaceHit, false);
+    document.getElementById("type__input").addEventListener("input", typing, false);
+    document.getElementById("type__input").addEventListener("keydown", spaceHit, false);
     markNextChar();
-    statsClass.startTime = Date.now();
+    statistics.startTime = Date.now();
     interval = setInterval(update, 200);
 }
 
 function gameStop() {
-    document.getElementById("start-stop").setAttribute("class", "btn btn-start");
-    document.getElementById("typeArea").removeEventListener("keydown", typing, false);
+    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--start");
+    document.getElementById("type__input").removeEventListener("keydown", typing, false);
     disableEnable(false);
     clearInterval(interval);
     update();
-    statsClass.stopTime = Date.now();
+    statistics.stopTime = Date.now();
 }
 
 function startStopButtonClicked() {
 
-    if (document.getElementById("start-stop").className === "btn btn-start") {
+    if (document.getElementById("start-stop").className === "game-control__btn game-control__btn--start") {
         gameStart();
     } else {
         gameStop();
@@ -247,7 +214,7 @@ function startStopButtonClicked() {
 }
 
 function clearMarker() {
-    let allSpan = document.getElementById("read-content").children;
+    let allSpan = document.getElementById("read__content").children;
     for (let i = 0; i < allSpan.length; i++) {
         allSpan[i].setAttribute("class", "marker-reset");
     }
@@ -278,19 +245,19 @@ function typing(e) {
         correct = false;
     }
     let stat = new Stat(marker, Date.now(), correct);
-    statsClass.stats.push(stat);
+    statistics.stats.push(stat);
     marker++;
     if (marker === currentText.text.length) {
         gameStop();
         return;
     }
     markNextChar();
-    console.log(statsClass.getRealtimeWPMUpTo(statsClass.stats.length - 1));
+    console.log(statistics.getRealtimeWPMUpTo(statistics.stats.length - 1));
 }
 
 function spaceHit(e) {
     if (e.keyCode == 32) {
-        document.getElementById("typeArea").value = "";
+        document.getElementById("type__input").value = "";
     }
 }
 
@@ -300,22 +267,22 @@ function errorSound() {
 }
 
 function update() {
-    document.getElementById("grossWPM").innerHTML = statsClass.getGrossWPM();
-    document.getElementById("accuracy").innerHTML = statsClass.getAccuracy();
-    document.getElementById("netWPM").innerHTML = statsClass.getNetWPM();
-    document.getElementById("errors").innerHTML = statsClass.getNrOfErrors();
+    document.getElementById("gross-wpm").innerHTML = statistics.getGrossWPM();
+    document.getElementById("accuracy").innerHTML = statistics.getAccuracy();
+    document.getElementById("net-wpm").innerHTML = statistics.getNetWPM();
+    document.getElementById("errors").innerHTML = statistics.getNrOfErrors();
     canvas();
 }
 
 function disableEnable(trueFalse) {
-    document.getElementById("ignoreCasing").disabled = trueFalse;
+    document.getElementById("ignore-casing").disabled = trueFalse;
     document.getElementById("language-swe").disabled = trueFalse;
     document.getElementById("language-eng").disabled = trueFalse;
-    document.getElementById("texts").disabled = trueFalse;
+    document.getElementById("text-choice__texts").disabled = trueFalse;
     if (trueFalse) {
-        document.getElementById("typeArea").disabled = false;
+        document.getElementById("type__input").disabled = false;
     } else {
-        document.getElementById("typeArea").disabled = true;
+        document.getElementById("type__input").disabled = true;
     }
 }
 
@@ -323,20 +290,22 @@ function reset() {
     marker = 0;
     nrOfError = 0;
     clearMarker();
-    statsClass.stats = [];
+    statistics.stats = [];
     update();
-    document.getElementById("typeArea").value = "";
+    document.getElementById("type__input").value = "";
 }
 
 function canvas() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+
+    // Very strange. Need to offset by 0.5 pixels in order to make the canvas sharp.
     ctx.translate(0.5, 0.5);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw horizontal bars
     ctx.beginPath();
-    ctx.strokeStyle = 'rgb(255,255,255)';
+    ctx.strokeStyle = 'lightgrey';
     ctx.lineWidth = 1;
     ctx.moveTo(0, 80);
     ctx.lineTo(200, 80);
@@ -348,46 +317,26 @@ function canvas() {
     ctx.lineTo(200, 20);
     ctx.stroke();
 
-    ctx.beginPath();
-    ctx.strokeStyle = 'lightblue';
-    ctx.lineWidth = 1;
-    ctx.moveTo(0, 100);
-    for (let i = 0; i < statsClass.stats.length; i++) {
-        let x = i * ((statsClass.stats.length / currentText.text.length) * canvas.width) / statsClass.stats.length;
-        let y = 100 - statsClass.getRealtimeWPMUpTo(i);
-        ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 1;
-    ctx.moveTo(0, 100);
-    for (let i = 0; i < statsClass.stats.length; i++) {
-        let x = i * ((statsClass.stats.length / currentText.text.length) * canvas.width) / statsClass.stats.length;
-        let y = 100 - statsClass.getNetWPMUpTo(i);
-        ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-
+    // Draw nr of Errors
     ctx.beginPath();
     ctx.strokeStyle = 'yellow';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < statsClass.stats.length; i++) {
-        let x = i * ((statsClass.stats.length / currentText.text.length) * canvas.width) / statsClass.stats.length;
-        let y = 100 - statsClass.getNrOfErrorsUpTo(i);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getNrOfErrorsUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
 
+    // Draw gross WPM
     ctx.beginPath();
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < statsClass.stats.length; i++) {
-        let x = i * ((statsClass.stats.length / currentText.text.length) * canvas.width) / statsClass.stats.length;
-        let y = 100 - statsClass.getGrossWPMUpTo(i);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getGrossWPMUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -398,7 +347,7 @@ function canvas() {
 function start() {
     loadXMLToArray("Texts.xml");
     addEventListeners();
-    statsClass = new Stats();
+    statistics = new Stats();
     setCurrentText();
     currentText.displayReadArea();
     canvas();
