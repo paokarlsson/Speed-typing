@@ -3,9 +3,10 @@ let texts = new Array();
 let currentText;
 let lang = "swedish";
 let ignoreCasing = false;
-let statistics;
 let interval;
-let game;
+let marker = 0;
+let nrOfError = 0;
+let statistics;
 
 class Text {
     constructor(title, author, language, text) {
@@ -116,162 +117,9 @@ class Stats {
     }
 }
 
-
-
-
-
-function populateChooseTexts() {
-    let textsElement = document.getElementById("text-choice__texts");
-    textsElement.innerHTML = "";
-    for (let i = 0; i < texts.length; i++) {
-        if (texts[i].language == lang) {
-            let option = document.createElement("option");
-            option.text = texts[i].title;
-            option.value = i;
-            textsElement.appendChild(option);
-        }
-    }
-    textsElement.addEventListener("change", setCurrentText, false);
-}
-
-function setCurrentText() {
-    let textsElement = document.getElementById("text-choice__texts");
-    currentText = texts[textsElement.value];
-    currentText.displayReadArea();
-    document.getElementById("start-stop").focus();
-    reset();
-}
-
-function languageChange() {
-    let language = document.getElementsByName("language");
-    for (let i = 0; i < language.length; i++) {
-        if (language[i].checked) {
-            lang = language[i].value;
-        }
-    }
-    populateChooseTexts();
-    setCurrentText();
-    currentText.displayReadArea();
-}
-
-function ignoreCasingChange() {
-    if (document.getElementById("ignore-casing").checked) {
-        ignoreCasing = true;
-    } else {
-        ignoreCasing = false;
-    }
-}
-
-function gameStart() {
-    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--stop");
-    document.getElementById("type__input").value = "";
-    disableEnable(true);
-    document.getElementById("type__input").focus();
-    reset();
-    document.getElementById("type__input").addEventListener("input", typing, false);
-    document.getElementById("type__input").addEventListener("keydown", spaceHit, false);
-    markNextChar();
-    game.statistics.startTime = Date.now();
-    interval = setInterval(update, 200);
-}
-
-function gameStop() {
-    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--start");
-    document.getElementById("type__input").removeEventListener("keydown", typing, false);
-    disableEnable(false);
-    clearInterval(interval);
-    update();
-    game.statistics.stopTime = Date.now();
-}
-
-function startStopButtonClicked() {
-
-    if (document.getElementById("start-stop").className === "game-control__btn game-control__btn--start") {
-        gameStart();
-    } else {
-        gameStop();
-    }
-}
-
-function clearMarker() {
-    let allSpan = document.getElementById("read__content").children;
-    for (let i = 0; i < allSpan.length; i++) {
-        allSpan[i].setAttribute("class", "marker-reset");
-    }
-}
-
-function markNextChar() {
-    document.getElementById("span" + marker).setAttribute("class", "marker");
-}
-
-function typing(e) {
-    let input = e.target.value;
-    let a, b;
-    if (ignoreCasing === false) {
-        a = input[input.length - 1];
-        b = currentText.text[marker];
-    } else {
-        a = input[input.length - 1].toLowerCase();
-        b = currentText.text[marker].toLowerCase();
-    }
-    let correct;
-    if (a === b) {
-        document.getElementById("span" + marker).setAttribute("class", "correct");
-        correct = true;
-    } else {
-        document.getElementById("span" + marker).setAttribute("class", "error");
-        errorSound();
-        nrOfError++;
-        correct = false;
-    }
-    let stat = new Stat(marker, Date.now(), correct);
-    game.statistics.stats.push(stat);
-    marker++;
-    if (marker === currentText.text.length) {
-        gameStop();
-        return;
-    }
-    markNextChar();
-}
-
-function spaceHit(e) {
-    if (e.keyCode == 32) {
-        document.getElementById("type__input").value = "";
-    }
-}
-
 function errorSound() {
     let errorSound = new Audio("./audio/error.mp3");
     errorSound.play();
-}
-
-function update() {
-    document.getElementById("gross-wpm").innerHTML = game.statistics.getGrossWPM();
-    document.getElementById("accuracy").innerHTML = game.statistics.getAccuracy();
-    document.getElementById("net-wpm").innerHTML = game.statistics.getNetWPM();
-    document.getElementById("errors").innerHTML = game.statistics.getNrOfErrors();
-    canvas();
-}
-
-function disableEnable(trueFalse) {
-    document.getElementById("ignore-casing").disabled = trueFalse;
-    document.getElementById("language-swe").disabled = trueFalse;
-    document.getElementById("language-eng").disabled = trueFalse;
-    document.getElementById("text-choice__texts").disabled = trueFalse;
-    if (trueFalse) {
-        document.getElementById("type__input").disabled = false;
-    } else {
-        document.getElementById("type__input").disabled = true;
-    }
-}
-
-function reset() {
-    marker = 0;
-    nrOfError = 0;
-    clearMarker();
-    game.statistics.stats = [];
-    update();
-    document.getElementById("type__input").value = "";
 }
 
 function canvas() {
@@ -301,9 +149,9 @@ function canvas() {
     ctx.strokeStyle = 'yellow';
     ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < game.statistics.stats.length; i++) {
-        let x = i * ((game.statistics.stats.length / currentText.text.length) * canvas.width) / game.statistics.stats.length;
-        let y = 100 - game.statistics.getNrOfErrorsUpTo(i);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getNrOfErrorsUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -313,9 +161,9 @@ function canvas() {
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
     ctx.moveTo(0, 100);
-    for (let i = 0; i < game.statistics.stats.length; i++) {
-        let x = i * ((game.statistics.stats.length / currentText.text.length) * canvas.width) / game.statistics.stats.length;
-        let y = 100 - game.statistics.getGrossWPMUpTo(i);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getGrossWPMUpTo(i);
         ctx.lineTo(x, y);
     }
     ctx.stroke();
@@ -323,8 +171,152 @@ function canvas() {
     ctx.translate(-0.5, -0.5);
 }
 
-class Game {
-    statistics = new Stats();
+function clearMarker() {
+    let allSpan = document.getElementById("read__content").children;
+    for (let i = 0; i < allSpan.length; i++) {
+        allSpan[i].setAttribute("class", "marker-reset");
+    }
+}
+
+function update() {
+    document.getElementById("gross-wpm").innerHTML = statistics.getGrossWPM();
+    document.getElementById("accuracy").innerHTML = statistics.getAccuracy();
+    document.getElementById("net-wpm").innerHTML = statistics.getNetWPM();
+    document.getElementById("errors").innerHTML = statistics.getNrOfErrors();
+    canvas();
+}
+
+function markNextChar() {
+    document.getElementById("span" + marker).setAttribute("class", "marker");
+}
+
+function spaceHit(e) {
+    if (e.keyCode == 32) {
+        document.getElementById("type__input").value = "";
+    }
+}
+
+function typing(e) {
+    let input = e.target.value;
+    let a, b;
+    if (ignoreCasing === false) {
+        a = input[input.length - 1];
+        b = currentText.text[marker];
+    } else {
+        a = input[input.length - 1].toLowerCase();
+        b = currentText.text[marker].toLowerCase();
+    }
+    let correct;
+    if (a === b) {
+        document.getElementById("span" + marker).setAttribute("class", "correct");
+        correct = true;
+    } else {
+        document.getElementById("span" + marker).setAttribute("class", "error");
+        errorSound();
+        nrOfError++;
+        correct = false;
+    }
+    let stat = new Stat(marker, Date.now(), correct);
+    statistics.stats.push(stat);
+    marker++;
+    if (marker === currentText.text.length) {
+        gameStop();
+        return;
+    }
+    markNextChar();
+}
+
+function disableEnable(trueFalse) {
+    document.getElementById("ignore-casing").disabled = trueFalse;
+    document.getElementById("language-swe").disabled = trueFalse;
+    document.getElementById("language-eng").disabled = trueFalse;
+    document.getElementById("text-choice__texts").disabled = trueFalse;
+    if (trueFalse) {
+        document.getElementById("type__input").disabled = false;
+    } else {
+        document.getElementById("type__input").disabled = true;
+    }
+}
+
+function reset() {
+    marker = 0;
+    clearMarker();
+    statistics.stats = [];
+    update();
+    document.getElementById("type__input").value = "";
+}
+
+function gameStop() {
+    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--start");
+    document.getElementById("type__input").removeEventListener("keydown", typing, false);
+    disableEnable(false);
+    clearInterval(interval);
+    update();
+    statistics.stopTime = Date.now();
+}
+
+function gameStart() {
+    document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--stop");
+    document.getElementById("type__input").value = "";
+    disableEnable(true);
+    document.getElementById("type__input").focus();
+    reset();
+    document.getElementById("type__input").addEventListener("input", typing, false);
+    document.getElementById("type__input").addEventListener("keydown", spaceHit, false);
+    markNextChar();
+    statistics.startTime = Date.now();
+    interval = setInterval(update, 200);
+}
+
+function setCurrentText() {
+    let textsElement = document.getElementById("text-choice__texts");
+    currentText = texts[textsElement.value];
+    currentText.displayReadArea();
+    document.getElementById("start-stop").focus();
+    reset();
+}
+
+function populateChooseTexts() {
+    let textsElement = document.getElementById("text-choice__texts");
+    textsElement.innerHTML = "";
+    for (let i = 0; i < texts.length; i++) {
+        if (texts[i].language == lang) {
+            let option = document.createElement("option");
+            option.text = texts[i].title;
+            option.value = i;
+            textsElement.appendChild(option);
+        }
+    }
+    textsElement.addEventListener("change", setCurrentText, false);
+}
+
+function startStopButtonClicked() {
+    if (document.getElementById("start-stop").className === "game-control__btn game-control__btn--start") {
+        gameStart();
+    } else {
+        gameStop();
+    }
+}
+
+function ignoreCasingChange() {
+    if (document.getElementById("ignore-casing").checked) {
+        ignoreCasing = true;
+    } else {
+        ignoreCasing = false;
+    }
+    document.getElementById("start-stop").focus();
+}
+
+function languageChange() {
+    let language = document.getElementsByName("language");
+    for (let i = 0; i < language.length; i++) {
+        if (language[i].checked) {
+            lang = language[i].value;
+        }
+    }
+    populateChooseTexts();
+    setCurrentText();
+    currentText.displayReadArea();
 }
 
 function addEventListeners() {
@@ -353,11 +345,9 @@ function loadXMLToArray(url) {
 }
 
 function start() {
+    statistics = new Stats();
     loadXMLToArray("Texts.xml");
     addEventListeners();
-    game = new Game();
-    //game.statistics = new Stats();
-
     setCurrentText();
     currentText.displayReadArea();
     canvas();
