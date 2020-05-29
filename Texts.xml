@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects>
 	<object>
-		<title>Test</title>
-		<author>Ola</author>
-		<language>swedish</language>
-		<text>Detta är ett kort test för att se om det funkar</text>
-	</object>
-
-	<object>
 		<title>Förändringens Tid</title>
 		<author>Erik Ström</author>
 		<language>swedish</language>

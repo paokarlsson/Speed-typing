@@ -48,6 +48,7 @@ class Text {
     }
 }
 
+// One element in the statistics array. 
 class Stat {
     constructor(markerIndex, timeStamp, correct) {
         this.markerIndex = markerIndex;
@@ -56,6 +57,7 @@ class Stat {
     }
 }
 
+// Staticstics class 
 class Stats {
     startTime;
     stopTime;
@@ -117,12 +119,14 @@ class Stats {
     }
 }
 
+// Plays an error sound. 
 function errorSound() {
     let errorSound = new Audio("./audio/error.mp3");
     errorSound.play();
 }
 
-function canvas() {
+// Drawing the perforamce diagram on a html canvas. 
+function drawCanvas() {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -178,24 +182,29 @@ function clearMarker() {
     }
 }
 
+// Updates the statistics table. And the call the canvas function.
 function update() {
     document.getElementById("gross-wpm").innerHTML = statistics.getGrossWPM();
     document.getElementById("accuracy").innerHTML = statistics.getAccuracy();
     document.getElementById("net-wpm").innerHTML = statistics.getNetWPM();
     document.getElementById("errors").innerHTML = statistics.getNrOfErrors();
-    canvas();
+    drawCanvas();
 }
 
 function markNextChar() {
     document.getElementById("span" + marker).setAttribute("class", "marker");
 }
 
-function spaceHit(e) {
+
+// This function is triggerd when the player is pressing the space key.
+function spaceKeyDown(e) {
     if (e.keyCode == 32) {
+        // It clears the input field.
         document.getElementById("type__input").value = "";
     }
 }
 
+// This function is triggerd when the player is typing.
 function typing(e) {
     let input = e.target.value;
     let a, b;
@@ -216,9 +225,11 @@ function typing(e) {
         nrOfError++;
         correct = false;
     }
+    // Every keypress is saved in a statistics object. Which is used form drawing the canvas. 
     let stat = new Stat(marker, Date.now(), correct);
     statistics.stats.push(stat);
     marker++;
+    // If its the last character in the text the gameStop function is called to terminate the game. 
     if (marker === currentText.text.length) {
         gameStop();
         return;
@@ -226,6 +237,7 @@ function typing(e) {
     markNextChar();
 }
 
+// Disableing all functionallity part from typing area and stop button. 
 function disableEnable(trueFalse) {
     document.getElementById("ignore-casing").disabled = trueFalse;
     document.getElementById("language-swe").disabled = trueFalse;
@@ -238,6 +250,7 @@ function disableEnable(trueFalse) {
     }
 }
 
+// Resetting the game. 
 function reset() {
     marker = 0;
     clearMarker();
@@ -246,28 +259,34 @@ function reset() {
     document.getElementById("type__input").value = "";
 }
 
+// This function is triggerd when stop button is clicked and a game is running.
 function gameStop() {
     document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--start");
     document.getElementById("type__input").removeEventListener("keydown", typing, false);
     disableEnable(false);
+    // This stops the call for the update function.
     clearInterval(interval);
     update();
     statistics.stopTime = Date.now();
 }
 
+// This function is triggerd when start button is clicked and a game is not running.
 function gameStart() {
     document.getElementById("start-stop").setAttribute("class", "game-control__btn game-control__btn--stop");
-    document.getElementById("type__input").value = "";
+    let inputField = document.getElementById("type__input");
+    inputField.value = "";
     disableEnable(true);
-    document.getElementById("type__input").focus();
+    inputField.focus();
     reset();
-    document.getElementById("type__input").addEventListener("input", typing, false);
-    document.getElementById("type__input").addEventListener("keydown", spaceHit, false);
+    inputField.addEventListener("input", typing, false);
+    inputField.addEventListener("keydown", spaceKeyDown, false);
     markNextChar();
     statistics.startTime = Date.now();
+    // This calls the update function every 200 milliseconds. 
     interval = setInterval(update, 200);
 }
 
+// This function is triggerd when a new text is choosen.
 function setCurrentText() {
     let textsElement = document.getElementById("text-choice__texts");
     currentText = texts[textsElement.value];
@@ -276,6 +295,7 @@ function setCurrentText() {
     reset();
 }
 
+// This function pupulates the text option field and adds eventlistner to it. 
 function populateChooseTexts() {
     let textsElement = document.getElementById("text-choice__texts");
     textsElement.innerHTML = "";
@@ -290,6 +310,8 @@ function populateChooseTexts() {
     textsElement.addEventListener("change", setCurrentText, false);
 }
 
+
+// This function is triggerd when the start button is clicked.  
 function startStopButtonClicked() {
     if (document.getElementById("start-stop").className === "game-control__btn game-control__btn--start") {
         gameStart();
@@ -298,6 +320,7 @@ function startStopButtonClicked() {
     }
 }
 
+// This function is triggerd when the ingnore casing checkbox changes value. 
 function ignoreCasingChange() {
     if (document.getElementById("ignore-casing").checked) {
         ignoreCasing = true;
@@ -307,6 +330,7 @@ function ignoreCasingChange() {
     document.getElementById("start-stop").focus();
 }
 
+// This function is triggerd when the language radio button changes value. 
 function languageChange() {
     let language = document.getElementsByName("language");
     for (let i = 0; i < language.length; i++) {
@@ -327,6 +351,7 @@ function addEventListeners() {
     populateChooseTexts();
 }
 
+// Populate a array of text objects from an xml file.  
 function loadXMLToArray(url) {
     let xml = new XMLHttpRequest();
     xml.open("get", url, false);
@@ -350,9 +375,7 @@ function start() {
     addEventListeners();
     setCurrentText();
     currentText.displayReadArea();
-    canvas();
-
+    drawCanvas();
 }
-
 
 window.addEventListener("load", start, false);

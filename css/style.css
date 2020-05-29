@@ -115,7 +115,7 @@ header {
 }
 
 .marker-reset {
-    background-color: none;
+    background-color: transparent;
 }
 
 .error {
