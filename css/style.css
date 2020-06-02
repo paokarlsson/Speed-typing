@@ -157,11 +157,11 @@ header {
 }
 
 .game-control__btn--start {
-    background-image: url("/img/start.png");
+    background-image: url("../img/start.png");
 }
 
 .game-control__btn--stop {
-    background-image: url("/img/stop.png");
+    background-image: url("../img/stop.png");
 }
 
 .stats {

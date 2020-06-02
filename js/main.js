@@ -88,7 +88,7 @@ class Stats {
     }
     getNetWPM() {
         let netWPM = this.getGrossWPM() - (this.getNrOfErrors() / this.getElapsedTimeInMinutes());
-        if (this.startTime !== undefined) {
+        if (this.startTime !== undefined && netWPM > 0) {
             return netWPM.toFixed(0);
         } else {
             return 0;
@@ -268,6 +268,7 @@ function gameStop() {
     clearInterval(interval);
     update();
     statistics.stopTime = Date.now();
+    document.getElementById("start-stop").focus();
 }
 
 // This function is triggerd when start button is clicked and a game is not running.
@@ -310,6 +311,11 @@ function populateChooseTexts() {
     textsElement.addEventListener("change", setCurrentText, false);
 }
 
+function startStopButtonEnter() {
+    if (event.keyCode === 13) {
+        startStopButtonClicked();
+    }
+}
 
 // This function is triggerd when the start button is clicked.  
 function startStopButtonClicked() {
@@ -348,6 +354,7 @@ function addEventListeners() {
     document.getElementById("language-eng").addEventListener("change", languageChange, false);
     document.getElementById("ignore-casing").addEventListener("change", ignoreCasingChange, false);
     document.getElementById("start-stop").addEventListener("click", startStopButtonClicked, false);
+    document.getElementById("start-stop").addEventListener("keyup", startStopButtonEnter, false);
     populateChooseTexts();
 }
 
