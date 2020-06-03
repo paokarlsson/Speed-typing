@@ -383,6 +383,7 @@ function start() {
     setCurrentText();
     currentText.displayReadArea();
     drawCanvas();
+    document.getElementById("start-stop").focus();
 }
 
 window.addEventListener("load", start, false);
