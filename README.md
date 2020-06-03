@@ -1,17 +1,21 @@
 # Projektuppgift
 ## Utvecklingsmiljö & Verktyg
-Webbapplikationen är byggd i VS Code på en Windows 10 laptop.
+Webbapplikationen är byggd i VS Code på en Windows 10 laptop och testad i Google Chrome, Microsoft Edge och Firefox.
 
 ## Syfte
-Det här är den sista projektuppgiften i kursen Webbprogrammering med HTML5, CSS3 & JavaScript. Syftet med projektet är att bygga ett spel/övningsverktyg som går ut på att skriva fort och rätt på ett tangentbord. Projektet går under namnet Speed typing. Speed typing går alltså ut på att skriva av ett text stycke. I texten ska det finnas en markör som visar vilken bokstav som ska skrivas härnest och vid knapptryckning så ska markören hoppa fram ett steg. 
-Det finns en lång kravspecifikation för hur och vad som ska implementeras. Dessa är några av de mer intressanta kraven: 
+Det här är den sista uppgiften i kursen Webbprogrammering med HTML5, CSS3 & JavaScript. Syftet med projektet är att bygga ett spel/övningsverktyg som går ut på att skriva fort och rätt på ett tangentbord. Projektet går under namnet Speed typing.
+
+Det finns en lång kravspecifikation för hur och vad som ska implementeras. Dessa är några av de mer intressanta kraven:
+
 - En markör som visar vilken bokstav som ska skrivas in.
-- Läsa in texter från en separat XML-fil.
+
+- Läsa in texter från en XML-fil.
+
 - I realtid rita upp en graf över skrivhastigheten på en canvas.
 
 ## Genomförande
 ### Markören
-Markören är det tecken som ska skrivas in härnäst då spelet är igång. Markören har en annan backgrundsfärg än övriga bokstäver och ska flyttas fram till nästa tecken så fort användaren trycker ner en tangent. För att få detta att fungera så är varje tecken i texten omsluten av en span-tag med ett unikt id. 
+Markören är placerad på det tecken som ska skrivas in härnäst då spelet är igång. Markören har en annan backgrundsfärg och ska flyttas fram till nästa tecken så fort användaren trycker ner en tangent. Detta sker oavsett om det är rätt eller fel tecken som tryckts in. För att få detta att fungera så är varje tecken i texten omsluten av en span-tag med ett unikt id. 
 
 ``` code
     makeSpan() {
@@ -28,9 +32,7 @@ Markören är det tecken som ska skrivas in härnäst då spelet är igång. Mar
 Här ovan är en funktion som är placerad i Text-klassen.
 Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, 'span1' tex. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funtionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
 
-I och med detta är det enkelt att komma åt varje bokstav separat genom dess unika id. 
-
-I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas för att manipulera hur ett separat tecken ser ut. 
+I och med detta är det enkelt att med hjälp av JavaScript komma åt varje bokstav separat genom dess unika id. 
 
 ``` code
 .marker {
@@ -51,6 +53,7 @@ I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas fö
 }
 ```
 
+I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas för att manipulera hur ett separat tecken ser ut. 
 
 ``` code
 function markNextChar() {
@@ -89,6 +92,10 @@ function typing(e) {
 
 document.getElementById("type__input").addEventListener("input", typing, false);
 ```
+
+I JavaScript-filen finns kodsnutten ovan. Längst ner i skriptet initeras en eventlyssnare som lyssnar till förändringar i textfältet där texten ska skrivas in. 
+Eventlyssnaren triggar i sin tur funktionen 'typing(e)'. 
+ b  
 
 
 
