@@ -13,7 +13,7 @@ Det finns en lång kravspecifikation för hur och vad som ska implementeras. Des
 ### Markören
 Markören är det tecken som ska skrivas in härnäst då spelet är igång. Markören har en annan backgrundsfärg än övriga bokstäver och ska flyttas fram till nästa tecken så fort användaren trycker ner en tangent. För att få detta att fungera så är varje tecken i texten omsluten av en span-tag med ett unikt id. 
 
-´´´ code
+``` code
     makeSpan() {
         let readArea = document.createElement("temp");
         for (let i = 0; i < this.text.length; i++) {
@@ -24,7 +24,7 @@ Markören är det tecken som ska skrivas in härnäst då spelet är igång. Mar
         }
         this.spannedText = readArea.innerHTML;
     }
-´´´
+```
 Här ovan är en funktion som är placerad i Text-klassen.
 Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, 'span1' tex. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funtionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
 
@@ -32,7 +32,7 @@ I och med detta är det enkelt att komma åt varje bokstav separat genom dess un
 
 I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas för att manipulera hur ett separat tecken ser ut. 
 
-´´´ code
+``` code
 .marker {
     background-color: skyblue;
     color: black;
@@ -49,10 +49,10 @@ I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas fö
 .correct {
     color: #777;
 }
-´´´
+```
 
 
-´´´ code
+``` code
 function markNextChar() {
     document.getElementById("span" + marker).setAttribute("class", "marker");
 }
@@ -88,7 +88,7 @@ function typing(e) {
 }
 
 document.getElementById("type__input").addEventListener("input", typing, false);
-´´´
+```
 
 
 
