@@ -20,7 +20,6 @@ class Text {
     }
     makeSpan() {
         let readArea = document.createElement("temp");
-        readArea.innerHTML = "";
         for (let i = 0; i < this.text.length; i++) {
             let newSpan = document.createElement("span");
             newSpan.setAttribute("id", "span" + i);
