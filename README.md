@@ -7,11 +7,11 @@ Det här är den sista uppgiften i kursen Webbprogrammering med HTML5, CSS3 & Ja
 
 Det finns en lång kravspecifikation för hur och vad som ska implementeras. Dessa är några av de mer intressanta kraven:
 
-- En markör som visar vilken bokstav som ska skrivas in.
+* En markör som visar vilken bokstav som ska skrivas in.
 
-- Läsa in texter från en XML-fil.
+* Läsa in texter från en XML-fil.
 
-- I realtid rita upp en graf över skrivhastigheten på en canvas.
+* I realtid rita upp en graf över skrivhastigheten på en canvas.
 
 ## Genomförande
 ### Markören
