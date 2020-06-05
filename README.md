@@ -15,7 +15,7 @@ Det finns en lång kravspecifikation för hur och vad som ska implementeras. Des
 
 ## Genomförande
 ### Markören
-Markören är placerad på det tecken som ska skrivas in härnäst då spelet är igång. Markören har en annan backgrundsfärg och ska flyttas fram till nästa tecken så fort användaren trycker ner en tangent. Detta sker oavsett om det är rätt eller fel tecken som tryckts in. För att få detta att fungera så är varje tecken i texten omsluten av en span-tag med ett unikt id. 
+Markören är placerad på det tecken som ska skrivas in härnäst då spelet är igång. Markören har en annan backgrundsfärg och ska flyttas fram till nästa tecken så fort användaren trycker ner en tangent. Detta sker oavsett om det är rätt eller fel tecken som skrivits in. För att få detta att fungera så är varje tecken i texten omsluten av en span-tag med ett unikt id. 
 
 ``` code
     makeSpan() {
@@ -29,10 +29,12 @@ Markören är placerad på det tecken som ska skrivas in härnäst då spelet ä
         this.spannedText = readArea.innerHTML;
     }
 ```
-Här ovan är en funktion som är placerad i Text-klassen.
-Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, 'span1' tex. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funtionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
+Här ovan är en funktion som gör om en text sträng till en ny text sträng fast med span-taggar runt varje tecken. Funktionen är placerad i Text-klassen.
+Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, t. ex.   'span1'. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funtionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
 
 I och med detta är det enkelt att med hjälp av JavaScript komma åt varje bokstav separat genom dess unika id. 
+
+I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas för att manipulera hur ett separat tecken ser ut. Se nedan.
 
 ``` code
 .marker {
@@ -53,7 +55,12 @@ I och med detta är det enkelt att med hjälp av JavaScript komma åt varje boks
 }
 ```
 
-I CSS-filen finns sedan fyra klasser som är förberedda att kunna användas för att manipulera hur ett separat tecken ser ut. 
+I JavaScript-filen finns kodsnutten nedan. Längst ner i skriptet initieras en eventlyssnare som lyssnar till förändringar i textfältet där texten skrivs in. 
+Eventlyssnaren triggar i sin tur funktionen typing(e). 
+Funktionen tar sedan det senast skrivna tecknet och jämför det med aktuellt tecken i text strängen. Beroende på om användaren valt att bocka för 'Ignore casing' bestäms sedan om de båda tecknen är lika eller inte. Om tecknen matchar byter tecknet färg  till mörk grå annars blir det rött. 
+Samtidigt lagras även tidpunkten, om det var korrekt och vilket tecken i ordningen det var, till en array i statistik objektet.  
+Markör iteratorn stegas upp ett steg och funktionen markNextChar() anropas för att markera sästa tecken på tur. 
+Om markör iteratorn är lika med textens längd, det vill säga att texten är slut, andropas gameStop() funktionen som stannar spelet.  
 
 ``` code
 function markNextChar() {
@@ -92,11 +99,31 @@ function typing(e) {
 
 document.getElementById("type__input").addEventListener("input", typing, false);
 ```
+### Texter från XML
+Texterna som finns att välja på hämtas dynamiskt från en XML-fil, Texts.xml, och strukturers som ett objekt av Text-klassen. 
+Funktionen, loadXMLToArray(url), nedan löser detta. Först tar den emot adressen till XML-filen som ett arrgument till funktionen. Därefter skapas ett nytt XMLHttpRequest objekt och funktionerna .open() och .send() körs. Därefter finns filens innehåll lättåtkommlig i .responseXML.
+XML-filen är något omstruktured jämfört med orginalfilen. Varje text, med titel, författare och språk, är nu omsluten av en object-tag som gör den lättare att kommunicera med. I koden nedan visas hur, genom en for-loop, varje objekt itereras förbi och dess innehåll fyller upp en array med Text-objekt. 
 
-I JavaScript-filen finns kodsnutten ovan. Längst ner i skriptet initeras en eventlyssnare som lyssnar till förändringar i textfältet där texten ska skrivas in. 
-Eventlyssnaren triggar i sin tur funktionen 'typing(e)'. 
- b  
+``` code
+function loadXMLToArray(url) {
+    let xml = new XMLHttpRequest();
+    xml.open("get", url, false);
+    xml.send(null);
+    xmlDoc = xml.responseXML;
+    let elements = xmlDoc.getElementsByTagName("object");
+    console.log(elements[0].getElementsByTagName("title")[0].innerHTML);
+    for (let i = 0; i < elements.length; i++) {
+        texts[i] = new Text(
+            elements[i].getElementsByTagName("title")[0].innerHTML,
+            elements[i].getElementsByTagName("author")[0].innerHTML,
+            elements[i].getElementsByTagName("language")[0].innerHTML,
+            elements[i].getElementsByTagName("text")[0].innerHTML
+        );
+    }
+}
+```
 
+### Realtids statistik på canvas
 
 
 ### Test
