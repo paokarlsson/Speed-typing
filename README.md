@@ -60,7 +60,7 @@ Eventlyssnaren triggar i sin tur funktionen typing(e).
 Funktionen tar sedan det senast skrivna tecknet och jämför det med aktuellt tecken i text strängen. Beroende på om användaren valt att bocka för 'Ignore casing' bestäms sedan om de båda tecknen är lika eller inte. Om tecknen matchar byter tecknet färg  till mörk grå annars blir det rött. 
 Samtidigt lagras även tidpunkten, om det var korrekt och vilket tecken i ordningen det var, till en array i statistik objektet.  
 Markör iteratorn stegas upp ett steg och funktionen markNextChar() anropas för att markera sästa tecken på tur. 
-Om markör iteratorn är lika med textens längd, det vill säga att texten är slut, andropas gameStop() funktionen som stannar spelet.  
+Om markör iteratorn är lika med textens längd, det vill säga att texten är slut, anropas gameStop() funktionen som stannar spelet.  
 
 ``` code
 function markNextChar() {
@@ -123,14 +123,15 @@ function loadXMLToArray(url) {
 }
 ```
 
-### Realtids statistik på canvas
-Nedan är funktionen drawCanvas(). Den har som funktion att kontinuerligt rita upp all tillgänglig statistik. Den anropas genom setInterval varje 200 millesekunder då spelet är igång.
+### Realtidsstatistik på canvas
+Nedan är funktionen drawCanvas(). Den har som uppgift att kontinuerligt rita upp all tillgänglig statistik. Den anropas genom funktionen setInterval varje 200 millesekunder då spelet är igång.
 
-Bland det första som funktionen gör är en pixelförskjutning med 0,5 pixlar i y och x-led. Detta är för att få canvasen skarp. Detta nollställs i slutet av funktionen genom att det sätt tillbaka med -0,5 pixlar. 
+Bland det första som funktionen gör är en pixelförskjutning med 0,5 pixlar i y och x-led. Detta är för att få canvasen skarp. Detta nollställs i slutet av funktionen genom att det sätts tillbaka med -0,5 pixlar. 
 
 Därefter körs en clearRect för att radera allt som finns ritat innan nytt innehåll tillkommer. 
 
-För att sedan rita upp själva statistiken så används en for-loop som itererar över all tillgänglig statistik. Ritningen utgår från nedre vänstra hörnet och x kordinaten räknas ut utifrån antalet statistikelement i statistik objektet i förhållande till textens längd. Sedan mappas det till canvasens beredd. För att få fram y kordinaten behövs ingen mappning, här ligger de intressanta dataintervallet inom canvasens höjd. Det ända som behöver göra är att ta 100 och dra ifrån statistiken eftersom canvasen räknar origo från övre vänstra hörnet.  
+För att sedan rita upp själva statistiken så används en for-loop som itererar över all tillgänglig statistik. Ritningen utgår från nedre vänstra hörnet och x kordinaten räknas ut utifrån antalet statistikelement i statistik objektet i förhållande till textens längd. Sedan mappas det till canvasens beredd. För att få fram y kordinaten behövs ingen mappning, här ligger de intressanta dataintervallet inom canvasens höjd. Det ända som behöver göras är att ta 100 och dra ifrån statistiken eftersom canvasen räknar origo från övre vänstra hörnet. 
+Förutom statistik för skrivhastighet så markeras även antalet fel ut löpande i grafen. 
 
 ```code
 function drawCanvas() {
