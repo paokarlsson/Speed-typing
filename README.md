@@ -124,13 +124,52 @@ function loadXMLToArray(url) {
 ```
 
 ### Realtids statistik på canvas
+Nedan är funktionen drawCanvas(). Den har som funktion att kontinuerligt rita upp all tillgänglig statistik. Den anropas genom setInterval varje 200 millesekunder då spelet är igång.
 
+Bland det första som funktionen gör är en pixelförskjutning med 0,5 pixlar i y och x-led. Detta är för att få canvasen skarp. Detta nollställs i slutet av funktionen genom att det sätt tillbaka med -0,5 pixlar. 
+
+Därefter körs en clearRect för att radera allt som finns ritat innan nytt innehåll tillkommer. 
+
+För att sedan rita upp själva statistiken så används en for-loop som itererar över all tillgänglig statistik. Ritningen utgår från nedre vänstra hörnet och x kordinaten räknas ut utifrån antalet statistikelement i statistik objektet i förhållande till textens längd. Sedan mappas det till canvasens beredd. För att få fram y kordinaten behövs ingen mappning, här ligger de intressanta dataintervallet inom canvasens höjd. Det ända som behöver göra är att ta 100 och dra ifrån statistiken eftersom canvasen räknar origo från övre vänstra hörnet.  
+
+```code
+function drawCanvas() {
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.translate(0.5, 0.5);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    /*
+    ...
+    */
+    ctx.beginPath();
+    ctx.strokeStyle = 'yellow';
+    ctx.lineWidth = 2;
+    ctx.moveTo(0, 100);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getNrOfErrorsUpTo(i);
+        ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2;
+    ctx.moveTo(0, 100);
+    for (let i = 0; i < statistics.stats.length; i++) {
+        let x = i * ((statistics.stats.length / currentText.text.length) * canvas.width) / statistics.stats.length;
+        let y = 100 - statistics.getGrossWPMUpTo(i);
+        ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.translate(-0.5, -0.5);
+}
+```
 
 ### Test
 Speed typing är publicerad på studenter.miun.se/~olka0600/speedtyping/ och är testad och verkar funka bra i Google Chrome, Microsoft Edge och Firefox. 
 
 
 ## Diskussion
-Projektuppgiften kändes från början lite övermäktig men efter det att jag satt igång så visade det sig att det gick relativt bra ändå.
+Projektuppgiften kändes från början lite övermäktig men efter det att jag satt igång så visade det sig att det gick relativt bra ändå. Riktigt kul var momentet med canvas. Det kommer jag ha nytta av. Det var som att kliva över en tröskel. Hade mer tid funnits så hade jag strukturerat om koden så att funktioner som hade med varandra att göra lyfts in i en egen klass. Jag gjorde det för några funktioner och jag gjorde några försök på fler delar men det skapade fler problem än det löste så jag lämnade det därhän. 
 
-Hade mer tid funnits så hade jag strukturerat om koden så att funktioner som hade med varandra att göra lyfts in i en egen klass. Jag gjorde några försök på detta men det skapade fler problem än det löste så jag lämnade det därhän. 
+Utifrån de i mitt tycke mest intressanta delarna i kravspecifikationen så tycker jag att de är lösta i bemärkelsen att de är implementerade och fungerar. Sedan som jag skrev ovan hade jag gärna jobbat mera med refaktorering. 
