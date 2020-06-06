@@ -30,7 +30,7 @@ Markören är placerad på det tecken som ska skrivas in härnäst då spelet ä
     }
 ```
 Här ovan är en funktion som gör om en text sträng till en ny text sträng fast med span-taggar runt varje tecken. Funktionen är placerad i Text-klassen.
-Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, t. ex.   'span1'. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funtionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
+Först initieras ett tomt temp-element med namn readArea. 'this.text' är texten som ska göras om så varje tecken omsluts av span-taggar. För varje tecken i 'this.text' körs en for-loop. I kroppen på for-loopen skapas en ny span-tag och den tilldelas ett unikt id, t. ex.   'span1'. Som innerText till span taggen sätts det tecken som för tillfället itereras förbi. Därefter används funktionen appendChild för att lägga till span-tagen till readArea. Det sista som görs är att det som står mellan taggarna i readArea, alltså alla span-element, sparas i objektet Text som 'this.spannedText'.
 
 I och med detta är det enkelt att med hjälp av JavaScript komma åt varje bokstav separat genom dess unika id. 
 
@@ -59,7 +59,7 @@ I JavaScript-filen finns kodsnutten nedan. Längst ner i skriptet initieras en e
 Eventlyssnaren triggar i sin tur funktionen typing(e). 
 Funktionen tar sedan det senast skrivna tecknet och jämför det med aktuellt tecken i text strängen. Beroende på om användaren valt att bocka för 'Ignore casing' bestäms sedan om de båda tecknen är lika eller inte. Om tecknen matchar byter tecknet färg  till mörk grå annars blir det rött. 
 Samtidigt lagras även tidpunkten, om det var korrekt och vilket tecken i ordningen det var, till en array i statistik objektet.  
-Markör iteratorn stegas upp ett steg och funktionen markNextChar() anropas för att markera sästa tecken på tur. 
+Markör iteratorn stegas upp ett steg och funktionen markNextChar() anropas för att markera nästa tecken på tur. 
 Om markör iteratorn är lika med textens längd, det vill säga att texten är slut, anropas gameStop() funktionen som stannar spelet.  
 
 ``` code
@@ -101,8 +101,8 @@ document.getElementById("type__input").addEventListener("input", typing, false);
 ```
 ### Texter från XML
 Texterna som finns att välja på hämtas dynamiskt från en XML-fil, Texts.xml, och strukturers som ett objekt av Text-klassen. 
-Funktionen, loadXMLToArray(url), nedan löser detta. Först tar den emot adressen till XML-filen som ett arrgument till funktionen. Därefter skapas ett nytt XMLHttpRequest objekt och funktionerna .open() och .send() körs. Därefter finns filens innehåll lättåtkommlig i .responseXML.
-XML-filen är något omstruktured jämfört med orginalfilen. Varje text, med titel, författare och språk, är nu omsluten av en object-tag som gör den lättare att kommunicera med. I koden nedan visas hur, genom en for-loop, varje objekt itereras förbi och dess innehåll fyller upp en array med Text-objekt. 
+Funktionen, loadXMLToArray(url), nedan löser detta. Först tar den emot adressen till XML-filen som ett arrgument till funktionen. Därefter skapas ett nytt XMLHttpRequest objekt och funktionerna .open() och .send() körs. Därefter finns filens innehåll lättåtkomlig i .responseXML.
+XML-filen är något omstrukturerad jämfört med originalfilen. Varje text, med titel, författare och språk, är nu omsluten av en object-tag som gör den lättare att kommunicera med. I koden nedan visas hur, genom en for-loop, varje objekt itereras förbi och dess innehåll fyller upp en array med Text-objekt. 
 
 ``` code
 function loadXMLToArray(url) {
@@ -124,13 +124,13 @@ function loadXMLToArray(url) {
 ```
 
 ### Realtidsstatistik på canvas
-Nedan är funktionen drawCanvas(). Den har som uppgift att kontinuerligt rita upp all tillgänglig statistik. Den anropas genom funktionen setInterval varje 200 millesekunder då spelet är igång.
+Nedan är funktionen drawCanvas(). Den har som uppgift att kontinuerligt rita upp all tillgänglig statistik. Den anropas genom funktionen setInterval varje 200 millisekunder då spelet är igång.
 
 Bland det första som funktionen gör är en pixelförskjutning med 0,5 pixlar i y och x-led. Detta är för att få canvasen skarp. Detta nollställs i slutet av funktionen genom att det sätts tillbaka med -0,5 pixlar. 
 
 Därefter körs en clearRect för att radera allt som finns ritat innan nytt innehåll tillkommer. 
 
-För att sedan rita upp själva statistiken så används en for-loop som itererar över all tillgänglig statistik. Ritningen utgår från nedre vänstra hörnet och x kordinaten räknas ut utifrån antalet statistikelement i statistik objektet i förhållande till textens längd. Sedan mappas det till canvasens beredd. För att få fram y kordinaten behövs ingen mappning, här ligger de intressanta dataintervallet inom canvasens höjd. Det ända som behöver göras är att ta 100 och dra ifrån statistiken eftersom canvasen räknar origo från övre vänstra hörnet. 
+För att sedan rita upp själva statistiken så används en for-loop som itererar över all tillgänglig statistik. Ritningen utgår från nedre vänstra hörnet och x koordinaten räknas ut utifrån antalet statistikelement i statistik objektet i förhållande till textens längd. Sedan mappas det till canvasens beredd. För att få fram y koordinaten behövs ingen mappning, här ligger de intressanta dataintervallet inom canvasens höjd. Det ända som behöver göras är att ta 100 och dra ifrån statistiken eftersom canvasen räknar origo från övre vänstra hörnet. 
 Förutom statistik för skrivhastighet så markeras även antalet fel ut löpande i grafen. 
 
 ```code
